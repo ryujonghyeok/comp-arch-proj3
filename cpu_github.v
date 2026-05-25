@@ -147,25 +147,25 @@ module cpu (
 
     always @(posedge clk) begin
         if(reset_n == 1'b0) begin // reset
-            num_instruction = 0;
-            counter = 63'b0;
-            readM_sync = 0;
+            num_instruction <= 0;
+            counter <= 63'b0;
+            readM_sync <= 0;
         end
         else begin
-            num_instruction = num_instruction + 1;
-            counter = counter + 1; // increment cycle counter
-            readM_sync = 1; // request new instruction
+            num_instruction <= num_instruction + 1;
+            counter <= counter + 1; // increment cycle counter
+            readM_sync <= 1; // request new instruction
         end
     end
 
     //if inputReady goes high -> "fetch" (receive new instruction from memory)
     always @(posedge inputReady or negedge reset_n) begin
         if(reset_n == 1'b0) begin // reset
-            fetched_cycle = -1;
+            fetched_cycle <= -1;
         end
         else begin
-            instruction = data; // fetch
-            fetched_cycle = counter; // remember that cpu fetched this cycle
+            instruction <= data; // fetch
+            fetched_cycle <= counter; // remember that cpu fetched this cycle
         end
     end
 
@@ -219,13 +219,13 @@ module PC(
 
     always @(posedge clk) begin
         if(reset_n == 1'b0) begin // if reset_n is low -> reset
-            instruction_addr = 0;
+            instruction_addr <= 0;
         end
         else if(Jump) begin // if current instruction is Jump -> make next addr by concat
-            instruction_addr = {instruction_addr[`WORD_SIZE - 1 : `WORD_SIZE - 4], J_target};
+            instruction_addr <= {instruction_addr[`WORD_SIZE - 1 : `WORD_SIZE - 4], J_target};
         end
         else begin // next addr
-            instruction_addr = instruction_addr + `WORD_SIZE'b1;
+            instruction_addr <= instruction_addr + `WORD_SIZE'b1;
         end
     end
 
